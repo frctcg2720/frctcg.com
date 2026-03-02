@@ -1,9 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbx00sHoS_IOvzC8cOlF6x2SpfBrmhIjp8jHe-fPGaoJWd_jYgB774XVfMbFXbKWW2ZP/exec">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FRC TCG - FIRST Robotics Trading Card Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Righteous', sans-serif;
+      background: #eeeeee;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      background: #eeeeee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 30px;
+    }
+    .nav-logo { font-size: 28px; color: #ff8a80; }
+    .nav-links { display: flex; gap: 10px; }
+    .nav-links a {
+      background: #82b1ff;
+      color: white;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .nav-links a:hover { background: #448aff; }
+    .nav-links a.pink { background: #ff80ab; }
+    .nav-links a.pink:hover { background: #f50057; }
+
+    /* HERO */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 50px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(80px, 20vw, 160px);
+      line-height: 0.9;
+      margin-bottom: 10px;
+    }
+    .hero h1 .frc { color: #82b1ff; display: block; }
+    .hero h1 .tcg { color: #ff8a80; display: block; }
+
+    .hero-sub {
+      font-size: clamp(14px, 2.5vw, 18px);
+      color: #888;
+      margin: 16px 0 32px;
+      max-width: 460px;
+      line-height: 1.6;
+    }
+
+    .btn-play {
+      background: #ff80ab;
+      color: white;
+      font-family: 'Righteous', sans-serif;
+      font-size: 28px;
+      padding: 18px 60px;
+      border-radius: 30px;
+      text-decoration: none;
+      box-shadow: 0 6px 0 #c2185b;
+      transition: all 0.15s;
+      display: inline-block;
+    }
+    .btn-play:hover {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #c2185b;
+    }
+
+
+
+    /* BINDER TRAY SECTION */
+    .section-tray {
+      background: #82b1ff;
+      border: 10px solid #448aff;
+      border-radius: 40px;
+      margin: 40px auto;
+      width: 90%;
+      max-width: 860px;
+      padding: 35px;
+    }
+
+    .section-tray h2 {
+      font-size: clamp(24px, 4vw, 36px);
+      color: white;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    .feature-icon { font-size: 40px; margin-bottom: 10px; }
+    .feature-title { font-size: 18px; color: #ff8a80; margin-bottom: 6px; }
+    .feature-desc { font-size: 13px; color: #888; line-height: 1.6; font-family: sans-serif; }
+
+    /* HOW TO PLAY */
+    .howto {
+      width: 90%;
+      max-width: 860px;
+      margin: 0 auto 40px;
+    }
+
+    .howto h2 {
+      font-size: clamp(28px, 5vw, 48px);
+      color: #ff8a80;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+
+    .step {
+      background: white;
+      border-radius: 20px;
+      padding: 20px 25px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    }
+
+    .step-num {
+      background: #ff80ab;
+      color: white;
+      font-size: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 0 #c2185b;
+    }
+
+    .step-text strong { font-size: 17px; color: #333; display: block; margin-bottom: 3px; }
+    .step-text span { font-size: 13px; color: #888; font-family: sans-serif; line-height: 1.6; }
+
+    /* BOTTOM PLAY BANNER */
+    .play-banner {
+      background: #424242;
+      color: white;
+      font-size: clamp(40px, 8vw, 70px);
+      text-align: center;
+      padding: 30px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: block;
+      margin-top: 40px;
+    }
+    .play-banner:hover { background: #ff8a80; }
+
+    /* FOOTER */
+    footer {
+      background: #eeeeee;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      color: #aaa;
+    }
+    footer a { color: #82b1ff; text-decoration: none; margin-left: 15px; }
+    footer a:hover { color: #448aff; }
+
+    @media (max-width: 500px) {
+      .nav-links a { font-size: 12px; padding: 6px 12px; }
+      footer { justify-content: center; text-align: center; }
+      footer a { margin: 0 8px; }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to FRC TCG...</p>
-</body>
-</html>
+
+  <nav>
+    <div class="nav-logo">FRC TCG</div>
+    <div class="nav-links">
+      <a href="https://docs.google.com/document/d/110iQ1hqa3wOehW9GxxOfhqV-WaZsRkKqT9HUWt-7lns/edit?usp=sharing" target="_blank">HOW TO PLAY</a>
+      <a href="https://script.google.com/macros/s/AKfycbx00sHoS_IOvzC8cO1F6x2SpfBrmhIjp8jHe-FPGaoJWd_jYgB774XVfMbFXbKWi2ZP/exec" class="pink">PLAY NOW</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>
+      <span class="frc">FRC</span>
+      <span class="tcg">TCG</span>
+    </h1>
+    <p class="hero-sub">Collect cards. Build your deck. Battle friends in real-time.</p>
+    <a href="https://script.google.com/macros/s/AKfycbx00sHoS_IOvzC8cO1F6x2SpfBrmhIjp8jHe-FPGaoJWd_jYgB774XVfMbFXbKWi2ZP/exec" class="btn-play">PLAY FREE</a>
+
+
+  </section>
+
+  <div class="section-tray">
+    <h2>WHAT IS FRC TCG?</h2>
+    <p style="color:white; font-size:16px; text-align:center; margin-bottom:25px; line-height:1.7; font-family:sans-serif;">
+      FRC TCG is a card game featuring cards made by FRC teams that celebrate the people and robots who make FIRST great! At competitions you can collect physical cards and store them in this app's binder. Pick 3 cards and battle a friend right in the app — and win rewards for your first victory!
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <div class="feature-title">COLLECT</div>
+        <div class="feature-desc">Pick up physical cards at competitions and add them to your digital binder. Each card has unique HP, abilities, and energy costs.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚔️</div>
+        <div class="feature-title">BATTLE</div>
+        <div class="feature-desc">Challenge friends to live 1v1 matches with a 6-digit code. Use abilities, manage energy, and outplay your opponent.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">WIN REWARDS</div>
+        <div class="feature-desc">Win your first match and claim a limited edition physical card from teams 2720 or 2992's pit!</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="howto" id="how-to-play">
+    <h2><a href="https://docs.google.com/document/d/110iQ1hqa3wOehW9GxxOfhqV-WaZsRkKqT9HUWt-7lns/edit?usp=sharing" target="_blank" style="color:#ff8a80; text-decoration:none;">HOW TO PLAY ↗</a></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Sign in with Google</strong>
+          <span>Your card binder and match history are saved automatically to your account.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Build Your Deck</strong>
+          <span>Add cards to your binder and pick any 3 to bring into battle.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Challenge a Friend</strong>
+          <span>Generate a 6-digit match code and share it — or enter theirs to join.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Battle!</strong>
+          <span>Take turns using abilities and swapping cards. Knock out all 3 of your opponent's cards to win!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://script.google.com/macros/s/AKfycbx00sHoS_IOvzC8cO1F6x2SpfBrmhIjp8jHe-FPGaoJWd_jYgB774XVfMbFXbKWi2ZP/exec" class="play-banner">PLAY NOW →</a>
+
+  <footer>
+    <div>© 2026 FRC TCG · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e485c4d5a4d491c191c1e6e49434f4742004d4143">[email&#160;protected]</a></div>
+    <div>
+      <a href="/privacy-policy.ht
